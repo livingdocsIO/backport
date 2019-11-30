@@ -1,0 +1,21 @@
+{
+  "name": "backport",
+  "version": "1.0.0",
+  "description": "A probot app that tries to do automatic backports",
+  "license": "ISC",
+  "repository": "https://github.com/livingdocsIO/backport.git",
+  "homepage": "https://github.com/livingdocsIO/backport",
+  "bugs": "https://github.com/livingdocsIO/backport/issues",
+  "keywords": [],
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "github-app": "^4.0.1",
+    "probot": "^9.6.6"
+  },
+  "engines": {
+    "node": ">= 12"
+  }
+}
