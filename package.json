@@ -1,0 +1,20 @@
+{
+  "name": "backport",
+  "version": "1.0.0",
+  "description": "Execute that command on a pull request to backport all the commits onto the branch `release-2019-12`. ``` /backport release-2019-12 ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/livingdocsIO/backport.git"
+  },
+  "keywords": [],
+  "author": "Marc Bachmann <marc.brookman@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/livingdocsIO/backport/issues"
+  },
+  "homepage": "https://github.com/livingdocsIO/backport#readme"
+}
