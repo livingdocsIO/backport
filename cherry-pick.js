@@ -22,6 +22,7 @@ async function getWorktree (slug, context, token) {
   const worktree = createGit(dir, context)
   try {
     await fs.stat(path.join(worktree.path, '.git'))
+    await worktree.git(['remote', 'set-url', 'origin', `https://x-access-token:${token}@github.com/${slug}.git`])
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
     await fs.mkdir(worktree.path, {recursive: true})
@@ -34,6 +35,7 @@ async function getWorktree (slug, context, token) {
     await worktree.git(['config', '--local', 'user.name', 'Machine User'])
     await worktree.git(['config', '--local', 'commit.gpgsign', 'false'])
   }
+
   return worktree
 }
 
