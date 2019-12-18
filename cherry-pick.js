@@ -53,7 +53,7 @@ module.exports = async function (context, pr, targetBase, token) {
     await worktree.git(['worktree', 'add', targetDir, targetDir])
 
     // Rebase the branch onto the new base and push
-    await branch.git(['rebase', '--onto', targetBase, pr.base.sha])
+    await branch.git(['rebase', '--onto', `origin/${targetBase}`, pr.base.sha])
     await branch.git(['push', 'origin', `${targetDir}:${targetBranch}`])
     return targetBranch
   } catch (err) {
