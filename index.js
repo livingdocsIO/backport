@@ -31,7 +31,9 @@ async function backportApp (app) {
   }
 
   app.on('pull_request_review_comment.created', handler)
+  app.on('pull_request_review_comment.edited', handler)
   app.on('issue_comment.created', handler)
+  app.on('issue_comment.edited', handler)
 }
 
 async function updateComment (context, body) {
