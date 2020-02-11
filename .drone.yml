@@ -14,7 +14,7 @@ steps:
   image: livingdocs/semantic-release:v1.0.0
   environment:
     GH_TOKEN:
-      from_secret: GH_TOKEN
+      from_secret: GITHUB_TOKEN
 
 trigger:
   event: [push]
@@ -38,6 +38,6 @@ trigger:
   event: [tag]
 ---
 kind: signature
-hmac: 411e5d05bf1c916fa25d212dcd143364905e7da9e0ca2b09349bbe464ca939d9
+hmac: 8a911994d468677c97613d10b33018236ff2ffba574cb5e5c7d8a49bd51cc743
 
 ...
