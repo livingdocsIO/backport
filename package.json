@@ -10,6 +10,9 @@
   "scripts": {
     "start": "node ./index.js"
   },
+  "release": {
+    "extends": "@livingdocs/semantic-release-presets/github-verify"
+  },
   "dependencies": {
     "fs-extra": "^8.1.0",
     "github-app": "^4.0.1",

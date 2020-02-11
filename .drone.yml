@@ -1,0 +1,43 @@
+---
+kind: pipeline
+name: build
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    dry_run: true
+    repo: livingdocs/backport
+    tags: [latest]
+
+- name: release
+  image: livingdocs/semantic-release:v1.0.0
+  environment:
+    GH_TOKEN:
+      from_secret: GH_TOKEN
+
+trigger:
+  event: [push]
+
+---
+kind: pipeline
+name: tag
+
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo: livingdocs/backport
+    tags: ["${DRONE_TAG}", latest]
+
+trigger:
+  event: [tag]
+---
+kind: signature
+hmac: 411e5d05bf1c916fa25d212dcd143364905e7da9e0ca2b09349bbe464ca939d9
+
+...
