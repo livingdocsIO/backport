@@ -30,7 +30,7 @@ async function getToken (installationId) {
 }
 
 async function createPullRequest (context, origPR, targetBase, targetBranch) {
-  return context.github.pullRequests.create(context.repo({
+  return context.github.pulls.create(context.repo({
     title: `${origPR.title} [${targetBase}] `,
     head: targetBranch,
     base: targetBase,
@@ -40,21 +40,21 @@ async function createPullRequest (context, origPR, targetBase, targetBranch) {
 
 async function getPullRequest (context) {
   if (context.payload.pull_request) return context.payload.pull_request
-  const pullRequest = await context.github.pullRequests.get(context.issue())
+  const pullRequest = await context.github.pulls.get(context.issue())
   return pullRequest.data
 }
 
 async function getReviewers (context) {
-  const reviewers = await context.github.pullRequests.listReviews(context.issue())
-  const rewiewRequests = await context.github.pullRequests.listReviewRequests(context.issue())
+  const reviewers = await context.github.pulls.listReviews(context.issue())
+  const rewiewRequests = await context.github.pulls.listReviewRequests(context.issue())
   const reviewerIds = reviewers.data.map(reviewer => reviewer.user.login)
   const reviewerRequestedIds = rewiewRequests.data.users.map(reviewer => reviewer.login)
   return [...reviewerIds, ...reviewerRequestedIds]
 }
 
 async function requestReviewers (context, prId, reviewers) {
-  return context.github.pullRequests.createReviewRequest(context.repo({
-    number: prId,
+  return context.github.pulls.createReviewRequest(context.repo({
+    pull_number: prId,
     reviewers: reviewers
   }))
 }
