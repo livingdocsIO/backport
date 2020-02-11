@@ -48,7 +48,7 @@ module.exports = async function (context, pr, targetBase, token) {
 
   try {
     // Fetch and create branch
-    await worktree.git(['fetch', 'origin', targetBase, pr.head.sha])
+    await worktree.git(['fetch', 'origin', targetBase, pr.head.sha, pr.base.sha])
     await worktree.git(['branch', targetDir, pr.head.sha])
     await worktree.git(['worktree', 'add', targetDir, targetDir])
 
