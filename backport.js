@@ -1,6 +1,12 @@
 const cherryPick = require('./cherry-pick')
 
 module.exports = async function (context, targetBase) {
+  const orig = context.issue
+  context.issue = function (...args) {
+    const v = orig.call(this, ...args)
+    return {...v, pull_number: v.number}
+  }
+
   const pr = await getPullRequest(context)
   const reviewers = await getReviewers(context)
   reviewers.push(pr.user.login)
