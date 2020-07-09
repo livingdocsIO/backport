@@ -2,19 +2,42 @@
 kind: pipeline
 name: build
 
+volumes:
+- name: dockersocket
+  host:
+    path: /var/run/docker.sock
+
 steps:
-- name: build
-  image: plugins/docker
-  settings:
-    dry_run: true
-    repo: livingdocs/backport
-    tags: [latest]
+- name: docker
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  environment:
+    DOCKER_USERNAME:
+      from_secret: DOCKER_USERNAME
+    DOCKER_PASSWORD:
+      from_secret: DOCKER_PASSWORD
+  commands:
+    - |
+      SHA_TAG=livingdocs/backport:sha-$DRONE_COMMIT_SHA
+      BRANCH_TAG=livingdocs/backport:branch-$(echo $DRONE_BRANCH | sed 's/[^a-zA-Z0-9.-]/-/g')
+
+      docker-login
+      docker build -t $SHA_TAG -t $BRANCH_TAG .
+      docker push $SHA_TAG
+      docker push $BRANCH_TAG
+
+      echo -----------------
+      echo Docker Tag: $SHA_TAG
+      echo Docker Branch Tag: $BRANCH_TAG
+      echo -----------------
 
 - name: release
   image: livingdocs/semantic-release:v1.0.0
   environment:
     GH_TOKEN:
-      from_secret: GITHUB_TOKEN
+      from_secret: GH_TOKEN
 
 trigger:
   event: [push]
@@ -23,21 +46,44 @@ trigger:
 kind: pipeline
 name: tag
 
+volumes:
+- name: dockersocket
+  host:
+    path: /var/run/docker.sock
+
 steps:
 - name: docker
-  image: plugins/docker
-  settings:
-    username:
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  environment:
+    DOCKER_USERNAME:
       from_secret: DOCKER_USERNAME
-    password:
+    DOCKER_PASSWORD:
       from_secret: DOCKER_PASSWORD
-    repo: livingdocs/backport
-    tags: ["${DRONE_TAG}", latest]
+  commands:
+    - |
+      SHA_TAG=livingdocs/backport:sha-$DRONE_COMMIT_SHA
+      RELEASE_TAG=livingdocs/backport:$DRONE_TAG
+
+      docker-login
+      docker build -t $RELEASE_TAG . -f-<<EOF
+      FROM $SHA_TAG
+      RUN node -e 'const pkg = require("./package.json"); pkg.version = "$DRONE_TAG".replace(/^v/, ""); fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2));'
+      EOF
+
+      docker push $RELEASE_TAG
+
+      echo -----------------
+      echo Docker Tag: $SHA_TAG
+      echo Docker Branch Tag: $RELEASE_TAG
+      echo -----------------
 
 trigger:
   event: [tag]
 ---
 kind: signature
-hmac: 8a911994d468677c97613d10b33018236ff2ffba574cb5e5c7d8a49bd51cc743
+hmac: a07abe65b73830f04dcc12c1cc70f11c6835ffec741ca57ed30e9047fb90360a
 
 ...
