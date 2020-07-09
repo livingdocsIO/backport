@@ -1,8 +1,10 @@
-FROM livingdocs/node:12.0
+FROM livingdocs/node:14
+
+ENV NODE_ENV=production
+ENV PORT 8080
 
 COPY package.json /app/
-RUN npm install --production && npm cache clean -f
+RUN npm ci && npm cache clean -f
 COPY . /app/
-ENV PORT 8080
 EXPOSE 8080
 CMD ["node", "/app/index.js"]
