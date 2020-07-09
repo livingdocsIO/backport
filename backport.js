@@ -40,7 +40,7 @@ async function createPullRequest (context, origPR, targetBase, targetBranch) {
     title: `${origPR.title} [${targetBase}] `,
     head: targetBranch,
     base: targetBase,
-    body: `Backport of #${origPR.number}\n\n${origPR.body}`
+    body: [`Backport of #${origPR.number}\n`, origPR.body].filter(Boolean).join('\n')
   }))
 }
 
