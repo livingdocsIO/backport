@@ -9,7 +9,7 @@ Execute that command on a pull request to backport all the commits onto the bran
 ### How to redeploy 
 First run:
 ```sh
-docker build livingdocs/backport .
+docker build -t livingdocs/backport .
 docker push livingdocs/backport
 ```
 
