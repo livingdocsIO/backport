@@ -15,7 +15,7 @@ async function backportApp (app) {
     let body = comment.body.replace(/^ *\/backport(.*)$/img, `🕑 /backport$1`)
     await updateComment(context, body)
 
-    await Promise.all(targetBranches.map(async (targetBranch) => {
+    await Promise.all(targetBranches.map(async ({arg1: targetBranch}) => {
       try {
         await backport(context, targetBranch)
         body = body.replace(`🕑 /backport ${targetBranch}`, `🎉 /backport ${targetBranch}`)
@@ -52,4 +52,5 @@ async function updateComment (context, body) {
 const commandRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
 function matchComments (comment) {
   return [...comment.matchAll(commandRegexp)]
+    .map(([command, arg1, arg2]) => {command, arg1, arg2})
 }
