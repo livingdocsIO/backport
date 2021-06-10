@@ -52,5 +52,5 @@ async function updateComment (context, body) {
 const commandRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
 function matchComments (comment) {
   return [...comment.matchAll(commandRegexp)]
-    .map(([command, arg1, arg2]) => {command, arg1, arg2})
+    .map(([command, arg1, arg2]) => ({command, arg1, arg2}))
 }
