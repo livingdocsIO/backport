@@ -9,25 +9,24 @@ async function backportApp (app) {
     const comment = context.payload.comment
     if (!issue.html_url.endsWith(`pull/${issue.number}`)) return
 
-    const targetBranch = matchComment(comment.body)
-    if (!targetBranch) return
-
-    try {
-      await updateComment(context, `🕑 ${comment.body}`)
-      await backport(context, targetBranch)
-      await updateComment(context, `🎉 ${comment.body}`)
-    } catch (err) {
-      context.log.warn(`Backport to ${targetBranch} failed`, err)
-      return updateComment(context, [
-        `💥 ${comment.body}`,
-        '',
-        `The backport to ${targetBranch} failed.`,
-        `Please do this backport manually.`,
-        '```js',
-        err.stack,
-        '```'
-      ].join('\n'))
-    }
+    await Promise.all(matchComments(comment.body).map(async (targetBranch) => {
+      try {
+        await updateComment(context, `🕑 ${comment.body}`)
+        await backport(context, targetBranch)
+        await updateComment(context, `🎉 ${comment.body}`)
+      } catch (err) {
+        context.log.warn(`Backport to ${targetBranch} failed`, err)
+        return updateComment(context, [
+          `💥 ${comment.body}`,
+          '',
+          `The backport to ${targetBranch} failed.`,
+          `Please do this backport manually.`,
+          '```js',
+          err.stack,
+          '```'
+        ].join('\n'))
+      }
+    }))
   }
 
   app.on('pull_request_review_comment.created', handler)
@@ -42,7 +41,7 @@ async function updateComment (context, body) {
   return resource.updateComment(context.issue({comment_id: comment.id, body}))
 }
 
-const commandRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/im
-function matchComment (comment) {
-  return commandRegexp.exec(comment.trim()) && RegExp.$1
+const commandRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
+function matchComments (comment) {
+  return [...comment.matchAll(commandRegexp)]
 }
