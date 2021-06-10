@@ -9,22 +9,30 @@ async function backportApp (app) {
     const comment = context.payload.comment
     if (!issue.html_url.endsWith(`pull/${issue.number}`)) return
 
-    await Promise.all(matchComments(comment.body).map(async (targetBranch) => {
+    const targetBranches = matchComments(comment.body)
+    if (!targetBranches.length) return
+
+    let body = comment.body.replace(/^ *\/backport(.*)$/img, `🕑 /backport$1`)
+    await updateComment(context, body)
+
+    await Promise.all(targetBranches.map(async (targetBranch) => {
       try {
-        await updateComment(context, `🕑 ${comment.body}`)
         await backport(context, targetBranch)
-        await updateComment(context, `🎉 ${comment.body}`)
+        body = body.replace(`🕑 /backport ${targetBranch}`, `🎉 /backport ${targetBranch}`)
+        await updateComment(context, body)
       } catch (err) {
         context.log.warn(`Backport to ${targetBranch} failed`, err)
-        return updateComment(context, [
-          `💥 ${comment.body}`,
+        body = [
+          body.replace(`🕑 /backport ${targetBranch}`, `💥 /backport ${targetBranch}`),
           '',
           `The backport to ${targetBranch} failed.`,
           `Please do this backport manually.`,
           '```js',
           err.stack,
           '```'
-        ].join('\n'))
+        ].join('\n')
+
+        return updateComment(context, body)
       }
     }))
   }
