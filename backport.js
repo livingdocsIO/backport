@@ -4,7 +4,7 @@ module.exports = async function (context, targetBase) {
   const orig = context.issue
   context.issue = function (...args) {
     const v = orig.call(this, ...args)
-    return {...v, pull_number: v.number}
+    return {...v, pull_number: v.pull_number || v.number, number: undefined}
   }
 
   const pr = await getPullRequest(context)
