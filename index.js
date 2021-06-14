@@ -15,7 +15,7 @@ async function backportApp (app) {
     let body = comment.body.replace(/^ *\/backport(.*)$/img, `🕑 /backport$1`)
     await updateComment(context, body)
 
-    await Promise.all(targetBranches.map(async ({arg1: targetBranch}) => {
+    for (const {arg1: targetBranch} of targetBranches) {
       try {
         await backport(context, targetBranch)
         body = body.replace(`🕑 /backport ${targetBranch}`, `🎉 /backport ${targetBranch}`)
@@ -34,7 +34,7 @@ async function backportApp (app) {
 
         return updateComment(context, body)
       }
-    }))
+    }
   }
 
   app.on('pull_request_review_comment.created', handler)
