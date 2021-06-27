@@ -40,7 +40,7 @@ async function createPullRequest (context, origPR, targetBase, targetBranch) {
     title: `${origPR.title} [${targetBase}] `,
     head: targetBranch,
     base: targetBase,
-    body: [`Backport of #${origPR.number}\n`, origPR.body].filter(Boolean).join('\n')
+    body: patchPullRequestBody(origPR)
   }))
 }
 
@@ -63,4 +63,8 @@ async function requestReviewers (context, prId, reviewers) {
     pull_number: prId,
     reviewers: reviewers
   }))
+}
+
+function patchPullRequestBody (pr) {
+  return (pr.body || '').replace(`/^(Relations:\n)?/`, `Relations:\n  - Master: #${pr.number}\n`)
 }

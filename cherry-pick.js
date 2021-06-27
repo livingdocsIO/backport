@@ -57,6 +57,7 @@ module.exports = async function (context, pr, targetBase, token) {
     await branch.git(['push', 'origin', `${targetDir}:${targetBranch}`])
     return targetBranch
   } catch (err) {
+    err.pr = pr
     throw err
   } finally {
     try {
