@@ -30,7 +30,7 @@ async function backportApp (app) {
           ...(err.pr ? ['```',
             `git fetch origin/${targetBranch}`,
             `git checkout -b backport/${issue.number}/${targetBranch} ${targetBranch} -t origin/backport/${issue.number}/${targetBranch}`,
-            `git cherry-pick ${pr.base.sha}..${pr.head.sha}`,
+            `git cherry-pick ${err.pr.base.sha}..${err.pr.head.sha}`,
             `git push`,
             '```'
           ] : []),
