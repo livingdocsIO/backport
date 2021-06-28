@@ -66,5 +66,5 @@ async function requestReviewers (context, prId, reviewers) {
 }
 
 function patchPullRequestBody (pr) {
-  return (pr.body || '').replace(`/^(Relations:\n)?/`, `Relations:\n  - Master: #${pr.number}\n`)
+  return (pr.body || '').replace(/^(Relations:\n)?/, `Relations:\n  - Master: #${pr.number}\n`)
 }
