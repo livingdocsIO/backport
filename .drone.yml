@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+type: docker
 name: build
 
 volumes:
@@ -44,6 +45,7 @@ trigger:
 
 ---
 kind: pipeline
+type: docker
 name: tag
 
 volumes:
@@ -80,10 +82,23 @@ steps:
       echo Docker Branch Tag: $RELEASE_TAG
       echo -----------------
 
+- name: deploy
+  image: dtzar/helm-kubectl:3.6.2
+  environment:
+    KUBE_CONFIG:
+      from_secret: kube_config
+  commands:
+    - |
+      set -e
+      mkdir -p /root/.kube && echo "$KUBE_CONFIG" > /root/.kube/config && chmod 600 /root/.kube/config
+      kubectl -n tools set image deployment/backport backport=livingdocs/backport:$DRONE_TAG
+      kubectl -n tools rollout status -w deployment/backport
+
 trigger:
   event: [tag]
+
 ---
 kind: signature
-hmac: a07abe65b73830f04dcc12c1cc70f11c6835ffec741ca57ed30e9047fb90360a
+hmac: d26f45a0fc59b032b12481d5e1ceadbef2b4a90d13c32e1bd56bd0660a97d5c5
 
 ...
