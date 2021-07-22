@@ -28,7 +28,7 @@ async function backportApp (app) {
           `The backport to ${targetBranch} failed.`,
           `Please do this backport manually.`,
           ...(err.pr ? ['```',
-            `git fetch origin/${targetBranch}`,
+            `git fetch origin ${targetBranch}`,
             `git checkout -b backport/${issue.number}/${targetBranch} ${targetBranch}`,
             `git cherry-pick ${err.pr.base.sha}..${err.pr.head.sha}`,
             `git push -u origin backport/${issue.number}/${targetBranch}`,

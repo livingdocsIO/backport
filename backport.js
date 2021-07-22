@@ -68,6 +68,6 @@ async function requestReviewers (context, prId, reviewers) {
 function patchPullRequestBody (pr) {
   const body = pr.body || ''
   const msg = `Relations:\n  - Master: #${pr.number}\n`
-  if (body.includes('Relations:\n')) return body.replace(/Relations:\n/, msg)
+  if (body.includes('Relations:\n')) return body.replace('Relations:\n', msg)
   return `${msg}${body}`
 }
