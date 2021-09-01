@@ -39,7 +39,7 @@ async function backportApp (app) {
           '```'
         ].join('\n')
 
-        return updateComment(context, body)
+        await updateComment(context, body)
       }
     }
   }
