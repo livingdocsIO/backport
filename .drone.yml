@@ -35,7 +35,7 @@ steps:
       echo -----------------
 
 - name: release
-  image: livingdocs/semantic-release:v1.0.0
+  image: livingdocs/semantic-release:v1.2.2
   environment:
     GH_TOKEN:
       from_secret: GH_TOKEN
@@ -99,6 +99,6 @@ trigger:
 
 ---
 kind: signature
-hmac: d26f45a0fc59b032b12481d5e1ceadbef2b4a90d13c32e1bd56bd0660a97d5c5
+hmac: 786b65e7101970ed757d36db48636246ea11d31a9909af3f4d7b408737c9f803
 
 ...
