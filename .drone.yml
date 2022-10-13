@@ -82,23 +82,11 @@ steps:
       echo Docker Branch Tag: $RELEASE_TAG
       echo -----------------
 
-- name: deploy
-  image: dtzar/helm-kubectl:3.6.2
-  environment:
-    KUBE_CONFIG:
-      from_secret: kube_config
-  commands:
-    - |
-      set -e
-      mkdir -p /root/.kube && echo "$KUBE_CONFIG" > /root/.kube/config && chmod 600 /root/.kube/config
-      kubectl -n tools set image deployment/backport backport=livingdocs/backport:$DRONE_TAG
-      kubectl -n tools rollout status -w deployment/backport
-
 trigger:
   event: [tag]
 
 ---
 kind: signature
-hmac: 786b65e7101970ed757d36db48636246ea11d31a9909af3f4d7b408737c9f803
+hmac: 27cb0a39b2d0311882a713ec415f535a9d5707c85ac30de04f0b12b90eba49d7
 
 ...
