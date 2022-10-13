@@ -8,8 +8,7 @@ module.exports = async function (context, targetBase) {
   }
 
   const pr = await getPullRequest(context)
-  const reviewers = await getReviewers(context)
-  reviewers.push(pr.user.login)
+  const reviewers = [context.payload.comment.user.id]
 
   const token = await getToken(context.payload.installation.id)
   const targetBranch = await cherryPick(context, pr, targetBase, token)
