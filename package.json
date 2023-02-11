@@ -16,7 +16,7 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "github-app": "^4.0.1",
-    "probot": "^9.11.5"
+    "probot": "^12.3.0"
   },
   "engines": {
     "node": ">= 16"
