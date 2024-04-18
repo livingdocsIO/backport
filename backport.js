@@ -36,7 +36,7 @@ async function getToken (installationId) {
 
 async function createPullRequest (context, origPR, targetBase, targetBranch) {
   return context.github.pulls.create(context.repo({
-    title: `${origPR.title} [${targetBase}] `,
+    title: origPR.title.replace(/( \[[a-z0-9-]+\])?$/, ` [${targetBase}]`),
     head: targetBranch,
     base: targetBase,
     body: patchPullRequestBody(origPR)
