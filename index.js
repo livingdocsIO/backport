@@ -70,7 +70,7 @@ async function matchComments (context, commentBody) {
 
   if (globalBranches.length) {
     const pullRequest = await backport.getPullRequest(context)
-    const backportBranches = (pullRequest.body.match(/Backports?: (.*)/)?.[1]?.split(/[, ]/).filter(Boolean) || [])
+    const backportBranches = (pullRequest.body.match(/Backports?: (.*)/)?.[1]?.split(/[`, ]/).filter(Boolean) || [])
       .map((b) => ({command: `/backport ${b}`, arg1: b}))
 
     if (backportBranches.length) {
