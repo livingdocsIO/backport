@@ -18,6 +18,8 @@ module.exports = async function (context, targetBase) {
   return backport
 }
 
+module.exports.getPullRequest = getPullRequest
+
 // Obtain token to push to this repo
 let cached
 const githubAuth = require('github-app')({

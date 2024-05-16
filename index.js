@@ -9,10 +9,11 @@ async function backportApp (app) {
     const comment = context.payload.comment
     if (!issue.html_url.endsWith(`pull/${issue.number}`)) return
 
-    const targetBranches = matchComments(comment.body)
+    const bodyAndBranches = await matchComments(context, comment.body)
+    const {targetBranches} = bodyAndBranches
     if (!targetBranches.length) return
 
-    let body = comment.body.replace(/^ *\/backport(.*)$/img, `🕑 /backport$1`)
+    let {body} = bodyAndBranches
     await updateComment(context, body)
 
     for (const {arg1: targetBranch} of targetBranches) {
@@ -56,8 +57,30 @@ async function updateComment (context, body) {
   return resource.updateComment(context.issue({comment_id: comment.id, body}))
 }
 
-const commandRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
-function matchComments (comment) {
-  return [...comment.matchAll(commandRegexp)]
+const staticBackportRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
+const globalBackportRegexp = /^ *\/backport$/img
+async function matchComments (context, commentBody) {
+  let body = commentBody
+
+  const targetBranches = [...commentBody.matchAll(staticBackportRegexp)]
     .map(([command, arg1, arg2]) => ({command, arg1, arg2}))
+
+  const globalBranches = [...commentBody.matchAll(globalBackportRegexp)]
+    .map(([command]) => ({command}))
+
+  if (globalBranches.length) {
+    const pullRequest = await backport.getPullRequest(context)
+    const backportBranches = (pullRequest.body.match(/Backports?: (.*)/)?.[1]?.split(/[, ]/).filter(Boolean) || [])
+      .map((b) => ({command: `/backport ${b}`, arg1: b}))
+
+    if (backportBranches.length) {
+      targetBranches.push(...backportBranches)
+      body = body.replace(/^( *\/backport)$/im, backportBranches.map((b) => `🕑 ${b.command}`).join('\n'))
+    } else {
+      body = body.replace(/^( *\/backport)$/im, `💥 /backport [no branches found in pr body]`)
+    }
+  }
+
+  body = body.replace(/^ *\/backport(.*)$/img, `🕑 /backport$1`)
+  return {body, targetBranches}
 }
