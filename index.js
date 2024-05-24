@@ -58,7 +58,7 @@ async function updateComment (context, body) {
 }
 
 const staticBackportRegexp = /^ *\/backport ([a-zA-Z0-9\/\-._]+) *([a-zA-Z0-9\/\-._]+)?$/img
-const globalBackportRegexp = /^ *\/backport$/img
+const globalBackportRegexp = /^ *\/backport *$/img
 async function matchComments (context, commentBody) {
   let body = commentBody
 
