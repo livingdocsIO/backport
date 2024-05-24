@@ -68,8 +68,8 @@ async function requestReviewers (context, prId, reviewers) {
 
 function patchPullRequestBody (pr) {
   const body = pr.body || ''
-  const indent = /Relations:\n( *)-/.exec(body)?.[1].length || 0
-  const msg = `Relations:\n${' '.repeat(indent)}- Master: #${pr.number}`
+  const indent = /Relations:\r?\n( *)-/.exec(body)?.[1].length || 0
+  const msg = `Relations:\r\n${' '.repeat(indent)}- Master: #${pr.number}`
   if (body.includes('Relations:')) return body.replace('Relations:', msg)
   return `${msg}\n${body}`
 }
