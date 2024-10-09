@@ -39,7 +39,7 @@ async function getWorktree (slug, context, token) {
   return worktree
 }
 
-module.exports = async function (context, pr, targetBase, token) {
+module.exports = async function (context, pr, targetBase, token, forcePush = false) {
   const slug = `${context.repo().owner}/${context.repo().repo}`
   const worktree = await getWorktree(slug, context, token)
   const targetBranch = 'backport/' + pr.number + '/' + targetBase
@@ -54,7 +54,9 @@ module.exports = async function (context, pr, targetBase, token) {
 
     // Rebase the branch onto the new base and push
     await branch.git(['rebase', '--onto', `origin/${targetBase}`, pr.base.sha])
-    await branch.git(['push', 'origin', `${targetDir}:${targetBranch}`])
+    const pushCommand = ['push', 'origin', `${targetDir}:${targetBranch}`]
+    if (forcePush) pushCommand.push('--force')
+    await branch.git(pushCommand)
     return targetBranch
   } catch (err) {
     err.pr = pr

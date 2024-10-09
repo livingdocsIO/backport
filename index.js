@@ -16,9 +16,9 @@ async function backportApp (app) {
     let {body} = bodyAndBranches
     await updateComment(context, body)
 
-    for (const {arg1: targetBranch} of targetBranches) {
+    for (const {arg1: targetBranch, arg2} of targetBranches) {
       try {
-        await backport(context, targetBranch)
+        await backport(context, targetBranch, arg2 === '--force')
         body = body.replace(`🕑 /backport ${targetBranch}`, `🎉 /backport ${targetBranch}`)
         await updateComment(context, body)
       } catch (err) {

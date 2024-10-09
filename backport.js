@@ -1,6 +1,6 @@
 const cherryPick = require('./cherry-pick')
 
-module.exports = async function (context, targetBase) {
+module.exports = async function (context, targetBase, forcePush = false) {
   const orig = context.issue
   context.issue = function (...args) {
     const v = orig.call(this, ...args)
@@ -11,7 +11,7 @@ module.exports = async function (context, targetBase) {
   const reviewers = [context.payload.comment.user.login]
 
   const token = await getToken(context.payload.installation.id)
-  const targetBranch = await cherryPick(context, pr, targetBase, token)
+  const targetBranch = await cherryPick(context, pr, targetBase, token, forcePush)
   const backport = await createPullRequest(context, pr, targetBase, targetBranch)
   await requestReviewers(context, backport.data.number, reviewers)
 
