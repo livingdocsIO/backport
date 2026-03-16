@@ -1,4 +1,4 @@
-FROM livingdocs/node:16
+FROM livingdocs/node:24
 
 ENV NODE_ENV=production
 ENV PORT 8080
