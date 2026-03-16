@@ -37,10 +37,12 @@ async function getWorktree(slug, context, token) {
     await fs.mkdir(worktree.path, {recursive: true})
     await worktree.git([
       'clone',
+      '--depth=10',
       '--bare',
       `https://x-access-token:${token}@github.com/${slug}.git`,
       '.git'
     ])
+    await worktree.git(['fetch', '--unshallow'])
     await worktree.git(['update-ref', '--no-deref', 'HEAD', 'HEAD^{commit}'])
     await fs.appendFile(
       path.join(worktree.path, '.git/config'),
