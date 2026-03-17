@@ -1,7 +1,5 @@
 FROM livingdocs/node:24
-
-ENV NODE_ENV=production
-ENV PORT 8080
+ENV NODE_ENV=production PORT=8080
 
 COPY package*.json /app/
 RUN npm ci && npm cache clean -f
